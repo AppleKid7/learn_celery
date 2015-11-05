@@ -79,16 +79,16 @@ $ pip3 install -r requirements.txt
   \frametitle{Testing RabbitMQ}
   We want to get the minimal working RabbitMQ working on localhost:
   \begin{minted}{bash}
-    # rabbitmqctl list_queues
+    $ rabbitmqctl list_queues
     Listing queues ...
-    # python3 basic_rabbitmq/send_message.py
+    $ python3 basic_rabbitmq/send_message.py
     We have sent the message 'Hello World' to RabbitMQ
-    # rabbitmqctl list_queues
+    $ rabbitmqctl list_queues
     Listing queues ...
     hello 1
-    # python3 basic_rabbitmq/send_message.py
+    $ python3 basic_rabbitmq/send_message.py
     We have sent the message 'Hello World' to RabbitMQ
-    # rabbitmqclt list_queues
+    $ rabbitmqclt list_queues
     Listing queues ...
     hello 2
   \end{minted}
@@ -97,11 +97,11 @@ $ pip3 install -r requirements.txt
 \begin{frame}[fragile]
   \frametitle{Receive the messages:}
   \begin{minted}{bash}
-    learn_celery# python3 basic_rabbitmq/receive_message.py
+    learn_celery$ python3 basic_rabbitmq/receive_message.py
     Waiting for messages. To exit press CTRL+C
     [x] Received (b'Hello World',)
-    [x] Received (b'Hello World',)
-    learn_celery# rabbitmqctl list_queues
+    [x] Received$ (b'Hello World',)
+    learn_celery rabbitmqctl list_queues
     Listing queues ...
     hello 0
   \end{minted}
@@ -111,17 +111,55 @@ $ pip3 install -r requirements.txt
   \frametitle{Deleting a queue}
   As you learn RabbitMQ, you start generating meaningless queues that you might want to get rid of. Here's how to delete them:
   \begin{minted}{bash}
-    learn_celery# rabbitmqctl list_queues
+    learn_celery$ rabbitmqctl list_queues
     Listing queues ...
     hello 0
-    (learn_celery) ~/learn_celery# rabbitmqctl stop_app
+    (learn_celery) ~/learn_celery$ rabbitmqctl stop_app
     Stopping node 'rabbit@nthompson-Precision-M6700' ...
-    (learn_celery) ~/learn_celery# rabbitmqctl reset
+    (learn_celery) ~/learn_celery$ rabbitmqctl reset
     Resetting node 'rabbit@nthompson-Precision-M6700' ...
-    (learn_celery) ~/learn_celery# rabbitmqctl start_app
+    (learn_celery) ~/learn_celery$ rabbitmqctl start_app
     Starting node 'rabbit@nthompson-Precision-M6700' ...
-    (learn_celery) ~/learn_celery# rabbitmqctl list_queues
+    (learn_celery) ~/learn_celery$ rabbitmqctl list_queues
     Listing queues ...
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{On to Celery}
+  \begin{itemize}
+  \item You could connect to your RabbitMQ directly, without Celery, but there's a lot of boilerplate.
+  \item Celery makes a nice glue between your Django and Rabbitmq.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Celery Basic Example}
+  \begin{minted}{bash}
+    $ cd basic_celery
+    $ celery --app=task work --loglevel=info &
+    $ python3 -q
+    >>> from tasks import add
+    >>> r = add.delay(12, 12)
+    [2015-11-05 14:16:07,806: INFO/MainProcess] Received task: tasks.add[4f2c482f-5e66-4118-89bc-5e1ff6b06111]
+    [2015-11-05 14:16:07,816: INFO/MainProcess] Task tasks.add[4f2c482f-5e66-4118-89bc-5e1ff6b06111] succeeded in 0.009626324999771896s: 24
+    >>> r.status
+    'SUCCESS'
+    >>> r.result
+    24
+  \end{minted}
+  Easy peasy.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Celery Basic Example}
+  Celery will start some queues in RabbitMQ after startup:
+  \begin{minted}{bash}
+    # rabbitmqctl list_queues
+    Listing queues ...
+    celery0
+    celery@nthompson-Precision-M6700.celery.pidbox0
+    celeryev.39a8ba96-9ed0-4b31-83a3-0728cb6273c50
   \end{minted}
 \end{frame}
 
