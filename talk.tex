@@ -69,11 +69,60 @@ $ pip3 install -r requirements.txt
     $ sudo rabbitmqctl status
     $ sudo lsof -i :5672 # 5672 is the well-known port of AMQP
   \end{minted}
+  If your server still isn't up, or you need to restart it:
+  \begin{minted}{bash}
+    $ sudo rabbitmq-server -detached 
+  \end{minted}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Testing RabbitMQ}
   We want to get the minimal working RabbitMQ working on localhost:
+  \begin{minted}{bash}
+    # rabbitmqctl list_queues
+    Listing queues ...
+    # python3 basic_rabbitmq/send_message.py
+    We have sent the message 'Hello World' to RabbitMQ
+    # rabbitmqctl list_queues
+    Listing queues ...
+    hello 1
+    # python3 basic_rabbitmq/send_message.py
+    We have sent the message 'Hello World' to RabbitMQ
+    # rabbitmqclt list_queues
+    Listing queues ...
+    hello 2
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Receive the messages:}
+  \begin{minted}{bash}
+    learn_celery# python3 basic_rabbitmq/receive_message.py
+    Waiting for messages. To exit press CTRL+C
+    [x] Received (b'Hello World',)
+    [x] Received (b'Hello World',)
+    learn_celery# rabbitmqctl list_queues
+    Listing queues ...
+    hello 0
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Deleting a queue}
+  As you learn RabbitMQ, you start generating meaningless queues that you might want to get rid of. Here's how to delete them:
+  \begin{minted}{bash}
+    learn_celery# rabbitmqctl list_queues
+    Listing queues ...
+    hello 0
+    (learn_celery) ~/learn_celery# rabbitmqctl stop_app
+    Stopping node 'rabbit@nthompson-Precision-M6700' ...
+    (learn_celery) ~/learn_celery# rabbitmqctl reset
+    Resetting node 'rabbit@nthompson-Precision-M6700' ...
+    (learn_celery) ~/learn_celery# rabbitmqctl start_app
+    Starting node 'rabbit@nthompson-Precision-M6700' ...
+    (learn_celery) ~/learn_celery# rabbitmqctl list_queues
+    Listing queues ...
+  \end{minted}
 \end{frame}
 
 \end{document}
