@@ -1,0 +1,79 @@
+\documentclass[9pt]{beamer}
+\usepackage{minted}
+%\usemintedstyle{manni}
+\usemintedstyle{murphy}
+\usepackage{hyperref}
+\hypersetup{
+colorlinks=true,
+urlcolor=blue
+}
+\usepackage{graphicx}
+
+\begin{document}
+\title{How to use Celery+RabbitMQ}
+\author{Nick Thompson} 
+\date{\today}
+
+\frame{\titlepage}
+
+\begin{frame}[fragile]
+\frametitle{Getting started:}
+\begin{minted}{bash}
+$ git clone https://github.com/NAThompson/learn_celery.git
+$ cd learn_celery
+$ pip3 install -r requirements.txt
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{What will we attempt to accomplish?}
+  
+  \begin{itemize}
+  \item Link Celery+RabbitMQ into Django ecosystem
+    \pause
+  \item Use tasks to keep page loads from timing out
+    \pause
+  \item Associate a running job with a progress bar
+    \pause
+  \item Link CPU cycles to billing
+    \pause
+  \item Autoscale nodes based on queue length
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Why Celery + RabbitMQ}
+  \begin{itemize}
+  \item Job scheduling is boring, and it's a pain.
+    \pause
+  \item So you certainly don't want to learn \emph{two} job schedulers
+    \pause
+  \item You never want to be in a spot where you have to swap out your job scheduler
+    \pause
+  \item Therefore, use the most well-tested and popular stack
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{What is RabbitMQ?}
+  \begin{itemize}
+  \item RabbitMQ is an implementation of the \emph{advanced messaged queuing protocol} (AMQP), a standardized way to pass data between applications.
+  \item The specification of AMQP is \href{http://www.amqp.org/specification/0-10/amqp-org-download}{300 pages long}, but it's basically an email server protocal for binary applications
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{How do I set up RabbitMQ?}
+  \begin{minted}{bash}
+    $ sudo apt-get install -y rabbitmq-server
+    $ sudo rabbitmqctl status
+    $ sudo lsof -i :5672 # 5672 is the well-known port of AMQP
+  \end{minted}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Testing RabbitMQ}
+  We want to get the minimal working RabbitMQ working on localhost:
+\end{frame}
+
+\end{document}

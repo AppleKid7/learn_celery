@@ -1,0 +1,12 @@
+__pycache__
+*.log
+*.toc
+*.nav
+*.aux
+*.gz
+*.vrb
+*.out
+*.snm
+bin/
+lib/
+lib64
