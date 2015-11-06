@@ -163,4 +163,25 @@ $ pip3 install -r requirements.txt
   \end{minted}
 \end{frame}
 
+\begin{frame}[fragile]
+  \frametitle{Multiple workers}
+  Celery has support for multiple workers:
+  \begin{minted}{bash}
+    celery --app=tasks worker --loglevel=INFO --concurrency=`nproc`
+    -------------- celery@nthompson-Precision-M6700 v3.1.19 (Cipater)
+    ---- **** -----
+    --- * ***  * -- Linux-3.19.0-32-generic-x86_64-with-Ubuntu-15.04-vivid
+    -- * - **** ---
+    - ** ---------- [config]
+    - ** ---------- .> app:         tasks:0x7feabb181128
+    - ** ---------- .> transport:   amqp://guest:**@localhost:5672//
+    - ** ---------- .> results:     rpc://
+    - *** --- * --- .> concurrency: 8 (prefork)
+    -- ******* ----
+    --- ***** ----- [queues]
+    -------------- .> celery           exchange=celery(direct) key=celery
+  \end{minted}
+  The default concurrency is nproc.
+\end{frame}
+
 \end{document}
