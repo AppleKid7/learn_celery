@@ -13,6 +13,7 @@ app.conf.update(
     CELERY_TIMEZONE='Europe/Oslo',
     CELERY_ENABLE_UTC=True,
     CELERY_MESSAGE_COMPRESSION='gzip',
+    CELERY_IGNORE_RESULT=False,
 )
 
 
