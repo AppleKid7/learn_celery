@@ -235,4 +235,48 @@ $ pip3 install -r requirements.txt
   You should see your task registered in the logs.
 \end{frame}
 
+\begin{frame}[fragile]
+  \frametitle{Minimal Django+Celery Example:}
+  Assuming you have RabbitMQ up, then:
+  \begin{minted}{bash}
+  learn_celery$ git checkout basic_async_task
+  learn_celery$ cd django_example
+  django_example$ celery --app=celery_in_django worker --concurrency=`nproc` --loglevel=info &
+  django_example$ ./manage.py runserver
+  \end{minted}
+  Now navigate to 127.0.0.1:8000, and start hitting buttons.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Not-as-minimal Django+Celery Example}
+  Problems with the minimal example:
+  \begin{itemize}
+  \item The user gets no feedback when he's pressed a button; as such might press it 40 times
+    \pause
+  \item The user doesn't know when the task is done
+    \pause
+  \item The user doesn't know how much to estimate how long the job will run
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Take 1: Store tasks in the session}
+  This is a low-effort, effective for some tasks method:
+  \begin{itemize}
+  \item Store task id in request.session; the use the task id as an argument to celery.result.AsyncResult constructor.
+    \pause
+  \item Then we make buttons available based on task status:
+    \begin{minted}{bash}
+      $ git checkout task_in_session
+      $ cd django_example
+      $ ./manage.py runserver
+    \end{minted}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Take 1: Store tasks in the session}
+  This is not a foolproof design, as the session should expire at browser close.
+\end{frame}
+
 \end{document}
