@@ -219,14 +219,20 @@ $ pip3 install -r requirements.txt
   \item Start a app and add some tasks to it:
     \begin{minted}{bash}
       $ ./manage.py startapp jobs
-      $ touch jobs/tasks.py
+      $ touch jobs/tasks.py # Define a task in here. Must be named tasks.py.
     \end{minted}
     \pause
   \item Add your app to INSTALLED\_APPS in settings.py, and
     \begin{minted}{bash}
-      echo "from .celery import app as celery_app\n" >> __init__.py
+      echo "from .celery import app as celery_app  # noqa" >> __init__.py
+    \end{minted}
+    \pause
+  \item Now start up celery:
+    \begin{minted}{bash}
+      $ celery --app=celery_in_django worker --concurrency=`nproc` --loglevel=INFO &
     \end{minted}
   \end{itemize}
+  You should see your task registered in the logs.
 \end{frame}
 
 \end{document}
