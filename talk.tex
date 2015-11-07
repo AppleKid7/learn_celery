@@ -62,6 +62,17 @@ $ pip3 install -r requirements.txt
   \end{itemize}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Warning!}
+  \begin{itemize}
+  \item Celery as an API is a bit baffling
+    \pause
+  \item Many people contend that using RabbitMQ directly leads to less astonishment
+    \pause
+  \item The author has never tried RabbitMQ directly, but has been astonished many times by Celery. So keep this in mind as an option.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]
   \frametitle{How do I set up RabbitMQ?}
   \begin{minted}{bash}
@@ -185,8 +196,37 @@ $ pip3 install -r requirements.txt
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Embedding into Django}
-  
+  \frametitle{Embedding Celery into Django}
+  It's not a huge jump from this to embedding in Django:
+  \begin{itemize}
+  \item Specify the serialization types you'll accept in settings.py:
+    \begin{minted}{python}
+      CELERY_ACCEPT_CONTENT = ['json']
+      CELERY_TASK_SERIALIZER = 'json'
+      CELERY_RESULT_SERIALIZER = 'json'
+    \end{minted}
+    \pause
+  \item Specify the broker url in settings.py
+    \begin{minted}{python}
+      BROKER_URL = 'amqp://guest:guest@localhost//'
+    \end{minted}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Embedding Celery into Django}
+  \begin{itemize}
+  \item Start a app and add some tasks to it:
+    \begin{minted}{bash}
+      $ ./manage.py startapp jobs
+      $ touch jobs/tasks.py
+    \end{minted}
+    \pause
+  \item Add your app to INSTALLED\_APPS in settings.py, and
+    \begin{minted}{bash}
+      echo "from .celery import app as celery_app\n" >> __init__.py
+    \end{minted}
+  \end{itemize}
 \end{frame}
 
 \end{document}

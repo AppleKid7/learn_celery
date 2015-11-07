@@ -4,7 +4,8 @@ from celery import Celery
 from numpy import random
 from scipy.fftpack import fft
 
-app = Celery('tasks', backend='rpc://', broker='amqp://guest@localhost//')
+#app = Celery('tasks', backend='rpc://', broker='amqp://guest@localhost//')
+app = Celery('tasks', backend='amqp', broker='amqp://guest@localhost//')
 
 app.conf.update(
     CELERY_TASK_SERIALIZER='json',

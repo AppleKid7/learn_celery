@@ -11,3 +11,4 @@ bin/
 lib/
 lib64
 pyvenv.cfg
+django_example/db.sqlite3
