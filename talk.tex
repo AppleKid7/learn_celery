@@ -276,7 +276,13 @@ $ pip3 install -r requirements.txt
 
 \begin{frame}
   \frametitle{Take 1: Store tasks in the session}
-  This is not a foolproof design, as the session should expire at browser close.
+  \begin{itemize}
+  \item This is not a great design, as the session should expire at browser close, and we might want to run jobs for longer than a session.
+    \pause
+  \item Hence we need to store task id's in our database.
+    \pause
+  \item Note: This will require user logins, the code is going to get complex!
+  \end{itemize}
 \end{frame}
 
 \end{document}

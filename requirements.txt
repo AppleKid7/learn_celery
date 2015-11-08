@@ -3,7 +3,9 @@ amqp==1.4.7
 anyjson==0.3.3
 billiard==3.3.0.21
 celery==3.1.19
+django-crispy-forms==1.5.2
 django-debug-toolbar==1.4
+django-registration-redux==1.2
 flake8==2.5.0
 kombu==3.0.29
 mccabe==0.3.1

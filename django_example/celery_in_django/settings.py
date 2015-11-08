@@ -20,9 +20,12 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'registration',
+    'crispy_forms',
     'jobs',
-    'debug_toolbar',
 )
+if DEBUG:
+    INSTALLED_APPS += ('debug_toolbar',)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -81,6 +84,8 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
 CSRF_COOKIE_HTTPONLY = True
 
 SESSION_COOKIE_HTTPONLY = True
@@ -90,3 +95,5 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SITE_ID = 1
 
 LANGUAGES = (('en', 'English'),)
+
+REGISTRATION_AUTO_LOGIN = True
