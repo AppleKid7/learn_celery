@@ -3,7 +3,7 @@
     <h1>Convert energy to entropy!</h1>
 
     <div class='col-lg-12'>
-      {% if not request.session.task_state or request.session.task_state == "SUCCESS" %}
+      {% if not request.session.active_job %}
       <form role='form' action='.' method='post'>{% csrf_token %}
 	<div class='form-group'>
 	  <label class='control-label'>Number of FFTs</label>
@@ -13,7 +13,7 @@
 	<input type='hidden' name='next' value=''/>
       </form>
       {% else %}
-      <p> FFT task is {{ request.session.task_state }} </p>
+      <p> FFT task is in progress . . . </p>
       {% endif %}
 
     </div>
