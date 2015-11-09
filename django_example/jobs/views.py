@@ -36,9 +36,13 @@ class Profile(LoginRequiredMixin, View):
             async_results.append(task)
             j = {'state': task.state,
                  'submission_time': job.submission_time}
-            if task.state == 'PENDING' or task.state == 'STARTED':
+            if task.state == 'PENDING' or task.state == 'STARTED' or task.state == 'PROGRESS':
                 active_job = True
                 j['result'] = 'unknown'
+                print(task.result)
+                print(task.info)
+                if task.state == 'PROGRESS':
+                    j['progress'] = task.info['current']
             elif task.state == 'SUCCESS':
                 j['result'] = task.result
             else:
