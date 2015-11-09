@@ -34,7 +34,8 @@ class Profile(LoginRequiredMixin, View):
         for job in jobUID:
             task = AsyncResult(job.task_id)
             async_results.append(task)
-            j = {'state': task.state}
+            j = {'state': task.state,
+                 'submission_time': job.submission_time}
             if task.state == 'PENDING' or task.state == 'STARTED':
                 active_job = True
                 j['result'] = 'unknown'
