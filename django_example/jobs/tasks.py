@@ -12,7 +12,9 @@ def fft_random(n):
     for i in range(n):
         x = random.normal(0, 0.1, 2000)
         y = fft(x)
-        if i == int(j*n/20):
+        # Report progress every 50th interval:
+        # If you report every step, then you'll overwhelm the messenging.
+        if i == int(j*n/50):
             j += 1
             print("j={}".format(j))
             current_task.update_state(state='PROGRESS',

@@ -26,27 +26,30 @@ def profile_redirect(request):
 
 class Profile(LoginRequiredMixin, View):
     def get(self, request, username):
-        jobUID = JobModel.objects.filter(user=request.user)
+        jobUIDs = JobModel.objects.filter(user=request.user)
 
         async_results = []
         active_job = False
         jobs = []
-        for job in jobUID:
-            task = AsyncResult(job.task_id)
+        for UID in jobUIDs:
+            task = AsyncResult(UID.task_id)
             async_results.append(task)
             j = {'state': task.state,
-                 'submission_time': job.submission_time}
-            if task.state == 'PENDING' or task.state == 'STARTED' or task.state == 'PROGRESS':
+                 'submission_time': UID.submission_time}
+
+            if task.state in ['PENDING', 'STARTED', 'PROGRESS']:
                 active_job = True
                 j['result'] = 'unknown'
-                print(task.result)
-                print(task.info)
+                j['progress'] = 1
+
                 if task.state == 'PROGRESS':
-                    j['progress'] = task.info['current']
+                    j['progress'] = int(100.0*float(task.info['current'])/float(task.info['total']))
+
             elif task.state == 'SUCCESS':
                 j['result'] = task.result
             else:
                 j['result'] = 'unknown'
+                j['progress'] = 1
 
             jobs.append(j)
 

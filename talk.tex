@@ -309,6 +309,18 @@ $ pip3 install -r requirements.txt
 \end{frame}
 
 \begin{frame}[fragile]
+  \frametitle{Progress Reporting}
+  An accepted method of doing progress reporting in Celery is the use of \href{http://docs.celeryproject.org/en/latest/userguide/tasks.html#custom-states}{custom states}. Let's look at the code:
+  \begin{minted}{bash}
+    $ git checkout progress_bar
+    $ basic_celery/kill_celery.sh
+    $ cd django_example
+    $ ./start_celery
+    $ ./manage.py runserver
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
   \frametitle{To Do:}
   \begin{itemize}
   \item Progress bar
