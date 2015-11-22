@@ -8,7 +8,7 @@ To compile the talk.tex file on Ubuntu, use:
     $ sudo apt-get install python-pygments
     $ pdflatex -shell-escape talk.tex && evince talk.pdf
 
-To install dependencies:
+To install dependencies (tested on Ubuntu 15.04):
 
 .. code-block:: console
 
@@ -27,4 +27,4 @@ To run the django examples use the standard boilerplate:
     $ ./manage.py collectstatic
     $ ./manage.py runserver
 
-Visit at `127.0.0.1:8000`.
+Visit at ``127.0.0.1:8000``.
