@@ -315,20 +315,22 @@ $ pip3 install -r requirements.txt
     $ git checkout progress_bar
     $ basic_celery/kill_celery.sh
     $ cd django_example
-    $ ./start_celery
+    $ ./start_celery.sh
     $ ./manage.py runserver
   \end{minted}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{To Do:}
+  \frametitle{Progress Bars}
+  If the progress bar is moving too slowly, we might want to terminate the running job. Easy: Link it to a post request, user the celery ``revoke'' function:
   \begin{itemize}
-  \item Progress bar
-    \pause
-  \item Move RabbitMQ off localhost
-    \pause
-  \item Autoscale nodes based on queue length
+  \item git checkout revoke
+  \item basic_celery/kill_celery.sh
+  \item cd django_example
+  \item ./start_celery.sh
+  \item ./manage.py runserver
   \end{itemize}
+  
 \end{frame}
 
 \end{document}

@@ -6,6 +6,7 @@ from django.views.generic import View
 
 
 from celery.result import AsyncResult
+from celery.task.control import revoke
 
 from .tasks import fft_random
 from .models import JobModel
@@ -20,8 +21,8 @@ class LoginRequiredMixin(object):
 
 @login_required
 def profile_redirect(request):
-    return HttpResponseRedirect(reverse('jobs:Profile',
-                                        args=[request.user.username]))
+    url = reverse('jobs:Profile', args=[request.user.username])
+    return HttpResponseRedirect(url)
 
 
 class Profile(LoginRequiredMixin, View):
@@ -47,9 +48,10 @@ class Profile(LoginRequiredMixin, View):
 
             elif task.state == 'SUCCESS':
                 j['result'] = task.result
+            elif task.state == 'REVOKED':
+                j['result'] = 'cancelled'
             else:
                 j['result'] = 'unknown'
-                j['progress'] = 1
 
             jobs.append(j)
 
@@ -69,9 +71,26 @@ class Profile(LoginRequiredMixin, View):
             job = JobModel(user=request.user, task_id=task.task_id)
             job.save()
 
-        return HttpResponseRedirect(reverse('jobs:Profile',
-                                            args=[request.user.username]))
+        if 'cancel_computation' in request.POST.keys():
+            task = get_active_task(request.user)
+            if task:
+                print("About to cancel")
+                revoke(task.task_id, terminate=True)
+            else:
+                print("No active task to cancel.")
 
+
+        url = reverse('jobs:Profile', args=[request.user.username])
+        return HttpResponseRedirect(url)
+
+def get_active_task(user):
+    jobUIDs = JobModel.objects.filter(user=user)
+    for UID in jobUIDs:
+        task = AsyncResult(UID.task_id)
+        if task.state in ['PENDING', 'STARTED', 'PROGRESS']:
+            return task
+
+    return None
 
 class Home(View):
     def get(self, request):

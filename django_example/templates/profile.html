@@ -21,6 +21,11 @@
 	 {{ job.progress }}%
 	</div>
       </div>
+
+      <form role='form' action='.' method='post'>{% csrf_token %}
+	<input class='btn btn-block btn-danger' type='submit' value='Cancel Computation' name='cancel_computation' />
+	<input type='hidden' name='next' value=''/>
+      </form>
       {% endif %}
       {% endfor %}
       {% endif %}
