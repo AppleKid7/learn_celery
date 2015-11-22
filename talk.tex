@@ -76,13 +76,13 @@ $ pip3 install -r requirements.txt
 \begin{frame}[fragile]
   \frametitle{How do I set up RabbitMQ?}
   \begin{minted}{bash}
-    $ sudo apt-get install -y rabbitmq-server
-    $ sudo rabbitmqctl status
-    $ sudo lsof -i :5672 # 5672 is the well-known port of AMQP
+$ sudo apt-get install -y rabbitmq-server
+$ sudo rabbitmqctl status
+$ sudo lsof -i :5672 # 5672 is the well-known port of AMQP
   \end{minted}
   If your server still isn't up, or you need to restart it:
   \begin{minted}{bash}
-    $ sudo rabbitmq-server -detached 
+$ sudo rabbitmq-server -detached 
   \end{minted}
 \end{frame}
 
@@ -108,13 +108,13 @@ $ pip3 install -r requirements.txt
 \begin{frame}[fragile]
   \frametitle{Receive the messages:}
   \begin{minted}{bash}
-    learn_celery$ python3 basic_rabbitmq/receive_message.py
-    Waiting for messages. To exit press CTRL+C
-    [x] Received (b'Hello World',)
-    [x] Received$ (b'Hello World',)
-    learn_celery rabbitmqctl list_queues
-    Listing queues ...
-    hello 0
+learn_celery$ python3 basic_rabbitmq/receive_message.py
+Waiting for messages. To exit press CTRL+C
+[x] Received (b'Hello World',)
+[x] Received$ (b'Hello World',)
+learn_celery rabbitmqctl list_queues
+Listing queues ...
+hello 0
   \end{minted}
 \end{frame}
 
@@ -147,17 +147,17 @@ $ pip3 install -r requirements.txt
 \begin{frame}[fragile]
   \frametitle{Celery Basic Example}
   \begin{minted}{bash}
-    $ cd basic_celery
-    $ celery --app=task work --loglevel=info &
-    $ python3 -q
-    >>> from tasks import add
-    >>> r = add.delay(12, 12)
-    [2015-11-05 14:16:07,806: INFO/MainProcess] Received task: tasks.add[4f2c482f-5e66-4118-89bc-5e1ff6b06111]
-    [2015-11-05 14:16:07,816: INFO/MainProcess] Task tasks.add[4f2c482f-5e66-4118-89bc-5e1ff6b06111] succeeded in 0.009626324999771896s: 24
-    >>> r.status
-    'SUCCESS'
-    >>> r.result
-    24
+$ cd basic_celery
+$ celery --app=task work --loglevel=info &
+$ python3 -q
+>>> from tasks import add
+>>> r = add.delay(12, 12)
+[2015-11-05 14:16:07,806: INFO/MainProcess] Received task: tasks.add[4f2c482f-5e66-4118-89bc-5e1ff6b06111]
+[2015-11-05 14:16:07,816: INFO/MainProcess] Task tasks.add[4f2c482f-5e66-4118-89bc-5e1ff6b06111] succeeded in 0.009626324999771896s: 24
+>>> r.status
+'SUCCESS'
+>>> r.result
+24
   \end{minted}
   Easy peasy.
 \end{frame}
@@ -218,18 +218,18 @@ $ pip3 install -r requirements.txt
   \begin{itemize}
   \item Start a app and add some tasks to it:
     \begin{minted}{bash}
-      $ ./manage.py startapp jobs
-      $ touch jobs/tasks.py # Define a task in here. Must be named tasks.py.
+$ ./manage.py startapp jobs
+$ touch jobs/tasks.py # Define a task in here. Must be named tasks.py.
     \end{minted}
     \pause
   \item Add your app to INSTALLED\_APPS in settings.py, and
     \begin{minted}{bash}
-      echo "from .celery import app as celery_app  # noqa" >> __init__.py
+echo "from .celery import app as celery_app  # noqa" >> __init__.py
     \end{minted}
     \pause
   \item Now start up celery:
     \begin{minted}{bash}
-      $ celery --app=celery_in_django worker --concurrency=`nproc` --loglevel=INFO &
+$ celery --app=celery_in_django worker --loglevel=INFO &
     \end{minted}
   \end{itemize}
   You should see your task registered in the logs.
@@ -239,10 +239,10 @@ $ pip3 install -r requirements.txt
   \frametitle{Minimal Django+Celery Example:}
   Assuming you have RabbitMQ up, then:
   \begin{minted}{bash}
-  learn_celery$ git checkout basic_async_task
-  learn_celery$ cd django_example
-  django_example$ celery --app=celery_in_django worker --concurrency=`nproc` --loglevel=info &
-  django_example$ ./manage.py runserver
+learn_celery$ git checkout basic_async_task
+learn_celery$ cd django_example
+django_example$ celery --app=celery_in_django worker --loglevel=info &
+django_example$ ./manage.py runserver
   \end{minted}
   Now navigate to 127.0.0.1:8000, and start hitting buttons.
 \end{frame}
@@ -323,13 +323,13 @@ $ pip3 install -r requirements.txt
 \begin{frame}[fragile]
   \frametitle{Progress Bars}
   If the progress bar is moving too slowly, we might want to terminate the running job. Easy: Link it to a post request, user the celery ``revoke'' function:
-  \begin{itemize}
-  \item git checkout revoke
-  \item basic_celery/kill_celery.sh
-  \item cd django_example
-  \item ./start_celery.sh
-  \item ./manage.py runserver
-  \end{itemize}
+  \begin{minted}{bash}
+   $ git checkout revoke
+   $ basic_celery/kill_celery.sh
+   $ cd django_example
+   $ ./start_celery.sh
+   $ ./manage.py runserver
+  \end{minted}
   
 \end{frame}
 
