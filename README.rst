@@ -16,3 +16,15 @@ To install dependencies:
     $ pyvenv .
     $ . bin/activate
     $ pip3 install -r requirements.txt
+
+To run the django examples use the standard boilerplate:
+
+.. code-block:: console
+
+    $ cd django_example
+    $ ./manage.py makemigrations
+    $ ./manage.py migrate
+    $ ./manage.py collectstatic
+    $ ./manage.py runserver
+
+Visit at `127.0.0.1:8000`.
