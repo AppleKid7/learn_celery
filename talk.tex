@@ -178,19 +178,19 @@ $ python3 -q
   \frametitle{Multiple workers}
   Celery has support for multiple workers:
   \begin{minted}{bash}
-    celery --app=tasks worker --loglevel=INFO --concurrency=`nproc`
-    -------------- celery@nthompson-Precision-M6700 v3.1.19 (Cipater)
-    ---- **** -----
-    --- * ***  * -- Linux-3.19.0-32-generic-x86_64-with-Ubuntu-15.04-vivid
-    -- * - **** ---
-    - ** ---------- [config]
-    - ** ---------- .> app:         tasks:0x7feabb181128
-    - ** ---------- .> transport:   amqp://guest:**@localhost:5672//
-    - ** ---------- .> results:     rpc://
-    - *** --- * --- .> concurrency: 8 (prefork)
-    -- ******* ----
-    --- ***** ----- [queues]
-    -------------- .> celery           exchange=celery(direct) key=celery
+celery --app=tasks worker --loglevel=INFO --concurrency=`nproc`
+-------------- celery@nthompson-Precision-M6700 v3.1.19 (Cipater)
+---- **** -----
+--- * ***  * -- Linux-3.19.0-32-generic-x86_64-with-Ubuntu-15.04-vivid
+-- * - **** ---
+- ** ---------- [config]
+- ** ---------- .> app:         tasks:0x7feabb181128
+- ** ---------- .> transport:   amqp://guest:**@localhost:5672//
+- ** ---------- .> results:     rpc://
+- *** --- * --- .> concurrency: 8 (prefork)
+-- ******* ----
+--- ***** ----- [queues]
+-------------- .> celery           exchange=celery(direct) key=celery
   \end{minted}
   The default concurrency is nproc.
 \end{frame}
@@ -332,7 +332,7 @@ django_example$ ./manage.py runserver
   \end{minted}  
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Job metadata}
   Note that the job metadata is being printed to stdout by Celery:
   \begin{minted}{bash}
@@ -340,6 +340,7 @@ django_example$ ./manage.py runserver
     Task jobs.tasks.fft_random[123e5a8d-1cda-457c-9082-810d4f163572]
     succeeded in 13.250278769002762s: 0.20759175911474792
   \end{minted}
+  
 \end{frame}
 
 \end{document}
