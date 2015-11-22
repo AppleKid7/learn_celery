@@ -45,6 +45,10 @@ class Profile(LoginRequiredMixin, View):
 
                 if task.state == 'PROGRESS':
                     j['progress'] = int(100.0*float(task.info['current'])/float(task.info['total']))
+                    # How do we distinguish between zero and undefined in DTL?
+                    # I don't know, so this is a hackaround.
+                    if j['progress'] == 0:
+                        j['progress'] = 1
 
             elif task.state == 'SUCCESS':
                 j['result'] = task.result

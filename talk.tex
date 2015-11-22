@@ -329,8 +329,17 @@ django_example$ ./manage.py runserver
    $ cd django_example
    $ ./start_celery.sh
    $ ./manage.py runserver
+  \end{minted}  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Job metadata}
+  Note that the job metadata is being printed to stdout by Celery:
+  \begin{minted}{bash}
+    [2015-11-22 19:13:35,024: INFO/MainProcess]
+    Task jobs.tasks.fft_random[123e5a8d-1cda-457c-9082-810d4f163572]
+    succeeded in 13.250278769002762s: 0.20759175911474792
   \end{minted}
-  
 \end{frame}
 
 \end{document}
