@@ -6,7 +6,13 @@ https://www.rabbitmq.com/tutorials/tutorial-one-python.html
 
 import pika
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+credentials = pika.PlainCredentials(username='nthompson',
+                                    password='changeme')
+parameters = pika.ConnectionParameters(host='localhost',
+                                       port=5672,
+                                       virtual_host='test',
+                                       credentials=credentials)
+connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 channel.queue_declare(queue='hello')
 
