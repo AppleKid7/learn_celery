@@ -6,10 +6,13 @@ This code is shamelessly stolen from the rabbitmq tutorial:
 https://www.rabbitmq.com/tutorials/tutorial-one-python.html
 """
 
-
 import pika
-
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+credentials = pika.PlainCredentials(username='nthompson', password='changeme')
+parameters = pika.ConnectionParameters(host='10.240.0.3',
+                                       port=5672,
+                                       virtual_host='test',
+                                       credentials=credentials)
+connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 channel.queue_declare(queue='hello')
 
