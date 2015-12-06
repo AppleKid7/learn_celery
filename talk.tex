@@ -329,18 +329,94 @@ django_example$ ./manage.py runserver
    $ cd django_example
    $ ./start_celery.sh
    $ ./manage.py runserver
+   $
   \end{minted}  
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Job metadata}
-  Note that the job metadata is being printed to stdout by Celery:
-  \begin{minted}{bash}
-    [2015-11-22 19:13:35,024: INFO/MainProcess]
-    Task jobs.tasks.fft_random[123e5a8d-1cda-457c-9082-810d4f163572]
-    succeeded in 13.250278769002762s: 0.20759175911474792
-  \end{minted}
+  \frametitle{From one node to two}
+  Having celery workers run on your server isn't useless, as it facilitates asynchronous programming, but it's not ideal (your celery tasks can essentially become a DOS attack against yourself).
   
+  Let's move our computation from our server to our compute nodes. First, get another instance up, and start rabbitmq:
+
+  \begin{minted}{bash}
+user@computenode$ sudo rabbitmqctl status
+...
+{listeners,[{clustering,25672,''::''},{amqp,5672,''::''}]},
+...
+user@computenode$ nmap -p 0-6000 127.0.0.1
+PORT     STATE SERVICE
+22/tcp   open  ssh
+4369/tcp open  epmd
+5672/tcp open  amqp
+  \end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{From one node to two}
+  Now make sure that your webserver can see the amqp service on your computenode. Generally, you'll want to use the internal IP address of the computenode so you don't get firewalled:
+\begin{minted}{bash}
+  user@webserver$ nmap -p 0-6000 10.240.0.3
+PORT     STATE SERVICE
+22/tcp   open  ssh
+4369/tcp open  epmd
+5672/tcp open  amqp
+user@webserver$ 
+\end{minted}
+Ok, cool. It's now \emph{possible} to communicate remotely. But there's a caveat: The ``guest'' user account for rabbitmq only works on localhost. So we need to set up a user account with a password on RabbitMQ.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{From one node to two}
+  Setting up a user account on RabbitMQ:
+  \begin{minted}{bash}
+computenode$ sudo rabbitmqctl delete_user guest
+computenode$ sudo rabbitmqctl add_user nthompson changeme
+computenode$ sudo rabbitmqctl add_vhost test
+computenode$ sudo rabbitmqctl set_permissions -p \ 
+            test nthompson ''.*'' ''.*'' ''.*''
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{From one node to two}
+  Let's make sure we can do this with pika before embedding it in a webframework. In send\_message.py, add the following lines:
+  \begin{minted}{python}
+credentials = pika.PlainCredentials(username='nthompson',
+                                    password='changeme')
+# Replace host with internal IP of compute node:
+parameters = pika.ConnectionParameters(host='10.240.0.3',
+                                       port=5672,
+                                       virtual_host='test',
+                                       credentials=credentials)
+connection = pika.BlockingConnection(parameters)
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{From one node to two}
+  In receive\_message.py, add the following lines:
+\begin{minted}{python}
+credentials = pika.PlainCredentials(username='nthompson',
+                                    password='changeme')
+parameters = pika.ConnectionParameters(host='localhost',
+                                       port=5672,
+                                       virtual_host='test',
+                                       credentials=credentials)
+connection = pika.BlockingConnection(parameters)
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{From one node to two}
+Now everything should work:
+\begin{minted}{bash}
+computenode$ git checkout twonodes
+computenode$ ./receive_message.py
+webserver$ git checkout twonodes
+webserver$ ./send_message.py 
+\end{minted}
 \end{frame}
 
 \end{document}
