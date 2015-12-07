@@ -8,7 +8,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-BROKER_URL = 'amqp://guest:guest@localhost//'
+BROKER_URL = 'amqp://nthompson:changme@10.240.0.3/test'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
