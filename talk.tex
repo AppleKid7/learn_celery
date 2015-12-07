@@ -148,7 +148,7 @@ hello 0
   \frametitle{Celery Basic Example}
   \begin{minted}{bash}
 $ cd basic_celery
-$ celery --app=task work --loglevel=info &
+$ celery --app=tasks worker --loglevel=info &
 $ python3 -q
 >>> from tasks import add
 >>> r = add.delay(12, 12)
@@ -417,6 +417,28 @@ computenode$ ./receive_message.py
 webserver$ git checkout twonodes
 webserver$ ./send_message.py 
 \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{From one node to two}
+Now let's do this in celery. In basic\_celery/tasks.py, add the lines
+\begin{minted}{python}
+app = Celery('tasks',
+             backend='amqp',
+             broker='amqp://nthompson:changeme@10.240.0.3:5672/test')
+\end{minted}
+where broker='transport://username:password@hostname:port/virtual\_host'. You can then \emph{submit messages to the remote broker} using the same syntax:
+\begin{minted}{bash}
+computenode$ celery worker --app=tasks --loglevel=info &
+webserver$ python3 -q
+>>> from tasks import add
+>>> t = add.delay(x=1000, y=2000)
+>>> t.status
+'SUCCESSFUL'
+>>> t.result
+3000
+\end{minted}
+Make sure the celery worker command is run on the computenode, and the function call is made on the webserver. \emph{Note how tasks.py must be identical between webserver and compute node!}
 \end{frame}
 
 \end{document}
