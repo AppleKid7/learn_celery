@@ -90,6 +90,7 @@ $ sudo rabbitmq-server -detached
   \frametitle{Testing RabbitMQ}
   We want to get the minimal working RabbitMQ working on localhost:
   \begin{minted}{bash}
+    $ git checkout 887acaeab3e977c781491d08eeb355702e4f9996
     $ rabbitmqctl list_queues
     Listing queues ...
     $ python3 basic_rabbitmq/send_message.py
