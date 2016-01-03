@@ -478,4 +478,122 @@ computenode1$ celery worker --app=tasks --loglevel=info
   \end{minted}
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Encrypting traffic between producers, brokers, and consumers}
+Our last example had unencrypted usernames and passwords being passed around in our cloud provider's network. This might be acceptable given the use case, but it'd be really embarrassing to have a hack where they found out the password was changeme.
+
+To get around this, we need to set up a certificate authority.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Setting up a certificate authority}
+  We follow the directions stated \href{https://www.rabbitmq.com/ssl.html}{here} to set up our certificate authority. Once you generate your certificate authority, then
+  \pause
+  \begin{itemize}
+    \item Kill your running rabbitmq-server:
+      \begin{minted}{bash}
+        $ sudo kill -9 `ps -ef | grep rabbit | grep -v grep | awk '{ print $2 }'`
+      \end{minted}
+      \pause
+    \item Restart it and check that your /etc/rabbitmq/rabbitmq.config has been detected by the server:
+      \begin{minted}{bash}
+        $ sudo rm -f /var/log/rabbitmq/rabbitmq@broker.log
+        $ sudo rabbitmq-server -detached
+        $ sudo cat /var/log/rabbitmq/rabbitmq@broker.log
+        =INFO REPORT==== 2-Jan-2016::23:18:44 ===
+        node           : rabbit@broker
+        home dir       : /var/lib/rabbitmq
+        config file(s) : /etc/rabbitmq/rabbitmq.config
+        cookie hash    : uqUqs/ckLlwy8Mi/PfG5+A==
+        log            : /var/log/rabbitmq/rabbit@broker.log
+        $
+      \end{minted}
+
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{RabbitMQ + SSL Debugging}
+\begin{itemize}
+\item Add your username/password/vhost back into rabbitmq:
+\begin{minted}{bash}
+$ sudo rabbitmqctl add_user nthompson strong_password
+$ sudo rabbitmqctl add_vhost my_vhost
+$ sudo rabbitmqctl set_permissions -p my_vhost nthompson '.*' '.*' '.*'
+$
+\end{minted}
+\pause
+\item Make sure rabbitmq is listening on port 5671:
+\begin{minted}{bash}
+$ sudo lsof -i :5671
+COMMAND   PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+beam    29078 rabbitmq   18u  IPv6  56913      0t0  TCP *:amqps (LISTEN)
+$
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{RabbitMQ+ SSL}
+Your celery workers need to then be told to use SSL, so edit basic\_celery/tasks.py to read
+\begin{minted}{python}
+app = Celery('tasks',
+             backend='amqp',
+             broker='amqp://nthompson:changeme@broker:5671/test')
+
+app.conf.update(
+    CELERY_TASK_SERIALIZER='json',
+    CELERY_ACCEPT_CONTENT=['json'],
+    CELERY_RESULT_SERIALIZER='json',
+    CELERY_TIMEZONE='Europe/Oslo',
+    CELERY_ENABLE_UTC=True,
+    CELERY_MESSAGE_COMPRESSION='gzip',
+    CELERY_IGNORE_RESULT=False,
+    BROKER_USE_SSL=True,
+)
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{RabbitMQ + SSL}
+Celery + Django + SSL: Edit settings.py to read:
+\begin{minted}{python}
+BROKER_URL = 'amqp://nthompson:changeme@10.240.0.3:5671/test'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TRACK_STARTED = True
+CELERY_ENABLE_UTC = True
+CELERY_TIMEZONE = 'Europe/London'
+BROKER_USE_SSL = True
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Containerizing}
+With Celery workers on multiple nodes, your code get replicated on many different servers, added entropy. This is a perfect docker application:
+\begin{minted}{bash}
+FROM ubuntu:15.10
+RUN apt-get update
+ADD . /usr/src
+WORKDIR /usr/src
+RUN xargs apt-get install -y < apt-gets.txt
+RUN pip3 install git+https://github.com/macropin/django-registration.git
+RUN pip3 install -r requirements.txt
+WORKDIR /usr/src/django_example
+EXPOSE 5671
+CMD["celery worker --app=/usr/src/learn_celery/django_example/celery_in_django --loglevel=info"]
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Using flower to monitor tasks}
+\begin{minted}{bash}
+broker$ pip3 install flower
+broker$ sudo rabbitmq-plugins enable rabbitmq_management
+broker$ sudo flower --app=celery_in_django --port=80 --broker=amqp://nthompson:changeme@localhost:5671/test 
+\end{minted}
+This allows us to monitor what's going on with our worker nodes!
+\end{frame}
+
 \end{document}
